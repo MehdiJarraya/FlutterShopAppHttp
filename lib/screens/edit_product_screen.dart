@@ -14,9 +14,15 @@ class EditProductScreen extends StatefulWidget {
 class _EditProductScreenState extends State<EditProductScreen> {
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
+  // TextEditingController(); to track changes because we need to preview the image
+  //other field are managed by the  Form we got values after submitting
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
+  // GlobalKey => allow us interact with a widget  used genery with form
+  //FormState class ctrl +space to see details because form is a statfull widget so it contain FormState
   final _form = GlobalKey<FormState>();
+  // we need to set bellow Form Widget  key to _form
+
   var _editedProduct = Product(
     id: null,
     title: '',
@@ -33,15 +39,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
   var _isInit = true;
   var _isLoading = false;
 
+// initState will run before build executed
   @override
   void initState() {
+    // we want to show image preview when image input loose focus
     _imageUrlFocusNode.addListener(_updateImageUrl);
     super.initState();
   }
 
+// didChangeDependencies  will run also before build executed
   @override
   void didChangeDependencies() {
+    // we are using this variable to assure that this treatment is executed only once
     if (_isInit) {
+      //  data from routing  can't be accessible in init state that's why we get product id here didChangeDependencies
+      // data from other source can be accessible initState
       final productId = ModalRoute.of(context).settings.arguments as String;
       if (productId != null) {
         _editedProduct =
@@ -103,17 +115,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-                title: Text('An error occurred!'),
-                content: Text('Something went wrong.'),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('Okay'),
-                    onPressed: () {
-                      Navigator.of(ctx).pop();
-                    },
-                  )
-                ],
-              ),
+            title: Text('An error occurred!'),
+            content: Text('Something went wrong.'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Okay'),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              )
+            ],
+          ),
         );
       }
       // finally {
@@ -155,7 +167,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     TextFormField(
                       initialValue: _initValues['title'],
                       decoration: InputDecoration(labelText: 'Title'),
+                      // add next action button to keyboard
                       textInputAction: TextInputAction.next,
+                      // next action button  implmentation focus price field ;)
                       onFieldSubmitted: (_) {
                         FocusScope.of(context).requestFocus(_priceFocusNode);
                       },
@@ -261,10 +275,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         Expanded(
                           child: TextFormField(
                             decoration: InputDecoration(labelText: 'Image URL'),
+                            // keyboard for url
                             keyboardType: TextInputType.url,
+                            //  add action to keyboard
                             textInputAction: TextInputAction.done,
                             controller: _imageUrlController,
                             focusNode: _imageUrlFocusNode,
+                            // trigured on done touched in keyboard ;)
+                            //  _ => we we d'ont need the parms
                             onFieldSubmitted: (_) {
                               _saveForm();
                             },
