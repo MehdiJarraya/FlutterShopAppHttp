@@ -112,6 +112,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
         await Provider.of<Products>(context, listen: false)
             .addProduct(_editedProduct);
       } catch (error) {
+        // using then unstead of await
+        // we have to return showDialog( .... ) because show dialog return a future  set  _isLoading = false; and navigation after user respond
+        // look addProduct provider to see comparaison between await and then
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(

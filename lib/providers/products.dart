@@ -94,6 +94,15 @@ class Products with ChangeNotifier {
     }
   }
 
+// ********** besoin we want to return A Future (helpfull to insert navigation code and loading in Widget) unstead of passing everthing as params like Lineosoft :p ********
+// *************** 1- Using then  **********
+// if we were using then  and we want to return a Future
+// Problem return inside then (nested sucess block does not trigurer function to return)
+//  Solution
+// retun the hole block return http.post(....)
+
+// ***************  2- Using assync await **********
+// addProduct type is Future but don't return anything void
   Future<void> addProduct(Product product) async {
     final url = Uri.https('flutter-update.firebaseio.com', '/products.json');
     try {
@@ -126,7 +135,8 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
-      final url = Uri.https('flutter-update.firebaseio.com', '/products/$id.json');
+      final url =
+          Uri.https('flutter-update.firebaseio.com', '/products/$id.json');
       await http.patch(url,
           body: json.encode({
             'title': newProduct.title,
@@ -142,7 +152,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = Uri.https('flutter-update.firebaseio.com', '/products/$id.json');
+    final url =
+        Uri.https('flutter-update.firebaseio.com', '/products/$id.json');
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
